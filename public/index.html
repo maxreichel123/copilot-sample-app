@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow - Simple Task Manager</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>TaskFlow</h1>
+      <p>Simple Task Management</p>
+    </header>
+
+    <main>
+      <section class="task-form">
+        <h2>Add New Task</h2>
+        <form id="add-task-form">
+          <div class="form-group">
+            <label for="task-title">Title</label>
+            <input type="text" id="task-title" name="title" required>
+          </div>
+          <div class="form-group">
+            <label for="task-description">Description</label>
+            <textarea id="task-description" name="description" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Task</button>
+        </form>
+      </section>
+
+      <section class="tasks-list">
+        <h2>Tasks</h2>
+        <div id="tasks-container"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

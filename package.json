@@ -1,0 +1,22 @@
+{
+  "name": "copilot-sample-app",
+  "version": "1.0.0",
+  "description": "Simple task management app for GitHub Copilot workshop",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed"
+  },
+  "keywords": ["tasks", "copilot", "workshop"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
