@@ -18,8 +18,8 @@ function escapeCsvField(field) {
     return '';
   }
   const stringField = String(field);
-  // Escape quotes by doubling them, wrap in quotes if contains comma, quote, or newline
-  if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n') || stringField.includes('\r')) {
+  // Escape quotes by doubling them, wrap in quotes if contains comma, quote, newline, or tab
+  if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n') || stringField.includes('\r') || stringField.includes('\t')) {
     return '"' + stringField.replace(/"/g, '""') + '"';
   }
   return stringField;
