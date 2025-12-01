@@ -12,6 +12,50 @@ router.get('/', (req, res) => {
   });
 });
 
+// Helper function to escape CSV fields
+function escapeCsvField(field) {
+  if (field === null || field === undefined) {
+    return '';
+  }
+  const stringField = String(field);
+  // Escape quotes by doubling them, wrap in quotes if contains comma, quote, or newline
+  if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n') || stringField.includes('\r')) {
+    return '"' + stringField.replace(/"/g, '""') + '"';
+  }
+  return stringField;
+}
+
+// GET export open tasks as CSV
+router.get('/export/csv', (req, res) => {
+  db.all('SELECT id, title, description, created_at FROM tasks WHERE completed = 0 ORDER BY created_at DESC', [], (err, rows) => {
+    if (err) {
+      console.error('Error exporting tasks:', err.message);
+      return res.status(500).json({ error: 'Failed to export tasks' });
+    }
+
+    // Build CSV content
+    const headers = ['Task ID', 'Title', 'Description', 'Created Date'];
+    const csvRows = [headers.join(',')];
+
+    for (const row of rows) {
+      const csvRow = [
+        escapeCsvField(row.id),
+        escapeCsvField(row.title),
+        escapeCsvField(row.description),
+        escapeCsvField(row.created_at)
+      ];
+      csvRows.push(csvRow.join(','));
+    }
+
+    const csvContent = csvRows.join('\n');
+
+    // Set headers for CSV download
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="open-tasks.csv"');
+    res.status(200).send(csvContent);
+  });
+});
+
 // GET single task
 router.get('/:id', (req, res) => {
   const { id } = req.params;

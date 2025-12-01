@@ -132,6 +132,32 @@ async function deleteTask(id) {
   }
 }
 
+// Export open tasks as CSV
+async function exportTasksAsCsv() {
+  try {
+    const response = await fetch(`${API_URL}/export/csv`);
+    
+    if (!response.ok) {
+      const error = await response.json();
+      alert('Failed to export tasks: ' + error.error);
+      return;
+    }
+    
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'open-tasks.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error exporting tasks:', error);
+    alert('Failed to export tasks');
+  }
+}
+
 // Escape HTML to prevent XSS
 function escapeHtml(text) {
   const div = document.createElement('div');
