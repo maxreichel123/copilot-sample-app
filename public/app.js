@@ -93,7 +93,7 @@ async function toggleTask(id, completed) {
       },
       body: JSON.stringify({
         ...task,
-        completed: completed ? 1 : 0
+        completed: task.completed ? 1 : 0
       })
     });
     
