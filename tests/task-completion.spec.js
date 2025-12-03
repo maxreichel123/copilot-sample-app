@@ -24,9 +24,6 @@ test.describe('Task Completion', () => {
     // Click the checkbox to mark as complete
     await checkbox.click();
 
-    // Wait a moment for the update to process
-    await page.waitForTimeout(500);
-
     // Verify checkbox stays checked
     await expect(checkbox).toBeChecked();
 
@@ -48,12 +45,10 @@ test.describe('Task Completion', () => {
 
     // Mark task as complete
     await checkbox.click();
-    await page.waitForTimeout(500);
     await expect(checkbox).toBeChecked();
 
     // Uncheck the task
     await checkbox.click();
-    await page.waitForTimeout(500);
 
     // Verify checkbox is unchecked
     await expect(checkbox).not.toBeChecked();
