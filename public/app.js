@@ -33,6 +33,7 @@ function displayTasks(tasks) {
     <div class="task-item ${task.completed ? 'completed' : ''}" data-id="${task.id}">
       <div class="task-header">
         <div class="task-title">${escapeHtml(task.title)}</div>
+        <div class="priority-badge priority-${task.priority}">${formatPriority(task.priority)}</div>
       </div>
       ${task.description ? `<div class="task-description">${escapeHtml(task.description)}</div>` : ''}
       <div class="task-actions">
@@ -52,6 +53,7 @@ async function handleAddTask(e) {
   
   const title = document.getElementById('task-title').value.trim();
   const description = document.getElementById('task-description').value.trim();
+  const priority = Number.parseInt(document.getElementById('task-priority').value, 10);
   
   if (!title) {
     alert('Title is required');
@@ -64,7 +66,7 @@ async function handleAddTask(e) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ title, description })
+      body: JSON.stringify({ title, description, priority })
     });
     
     if (response.ok) {
@@ -137,4 +139,17 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+function formatPriority(priority) {
+  switch (priority) {
+    case 1:
+      return 'High';
+    case 2:
+      return 'Medium';
+    case 3:
+      return 'Low';
+    default:
+      return 'Medium';
+  }
 }

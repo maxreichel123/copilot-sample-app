@@ -62,7 +62,8 @@ header p {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -72,7 +73,8 @@ header p {
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
   outline: none;
   border-color: #2563eb;
 }
@@ -149,6 +151,33 @@ header p {
   font-size: 1.2rem;
   font-weight: 600;
   color: #333;
+}
+
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.priority-1 {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.priority-2 {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.priority-3 {
+  background: #e0f2fe;
+  color: #0369a1;
 }
 
 .task-description {
