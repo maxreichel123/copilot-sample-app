@@ -86,6 +86,7 @@ async function toggleTask(id, completed) {
     const response = await fetch(`${API_URL}/${id}`);
     const task = await response.json();
     
+    const normalizedCompleted = Boolean(completed);
     const updateResponse = await fetch(`${API_URL}/${id}`, {
       method: 'PUT',
       headers: {
@@ -93,7 +94,7 @@ async function toggleTask(id, completed) {
       },
       body: JSON.stringify({
         ...task,
-        completed
+        completed: normalizedCompleted
       })
     });
     
