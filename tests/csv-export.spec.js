@@ -92,3 +92,76 @@ test.describe('CSV Export', () => {
     expect(csvContent).toContain('Task with, comma');
   });
 });
+
+test.describe('XLSX Export', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
+
+  test('should have Export as XLSX button visible', async ({ page }) => {
+    const exportButton = page.getByRole('button', { name: 'Export as XLSX' });
+    await expect(exportButton).toBeVisible();
+  });
+
+  test('should download XLSX file when clicking Export as XLSX button', async ({ page }) => {
+    // Add a task first to ensure there's data to export
+    await page.fill('#task-title', 'Test XLSX Export Task');
+    await page.fill('#task-description', 'Task for XLSX export test');
+    await page.click('button[type="submit"]');
+    
+    // Wait for the task to appear
+    await expect(page.locator('.task-item').filter({ hasText: 'Test XLSX Export Task' })).toBeVisible();
+
+    // Click the export button and wait for the download
+    const downloadPromise = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'Export as XLSX' }).click();
+    const download = await downloadPromise;
+
+    // Verify the download
+    expect(download.suggestedFilename()).toBe('open-tasks.xlsx');
+  });
+
+  test('should only export open tasks in XLSX', async ({ request }) => {
+    // Create an open task via API
+    await request.post('/api/tasks', {
+      data: { title: 'Open Task for XLSX', description: 'This should appear in XLSX' }
+    });
+
+    // Create a completed task via API
+    const completedTaskResponse = await request.post('/api/tasks', {
+      data: { title: 'Completed Task for XLSX', description: 'This should NOT appear in XLSX' }
+    });
+    const completedTask = await completedTaskResponse.json();
+    
+    // Mark it as completed
+    await request.put(`/api/tasks/${completedTask.id}`, {
+      data: { 
+        title: completedTask.title, 
+        description: completedTask.description, 
+        completed: 1 
+      }
+    });
+
+    // Request XLSX export via API
+    const xlsxResponse = await request.get('/api/tasks/export/xlsx');
+    expect(xlsxResponse.ok()).toBeTruthy();
+    
+    // Verify content-type header
+    expect(xlsxResponse.headers()['content-type']).toContain('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  });
+
+  test('should return valid XLSX file', async ({ request }) => {
+    // Create a test task
+    await request.post('/api/tasks', {
+      data: { title: 'XLSX Test Task', description: 'Testing XLSX format' }
+    });
+
+    const response = await request.get('/api/tasks/export/xlsx');
+    expect(response.ok()).toBeTruthy();
+    
+    // Verify content-type and content-disposition headers
+    expect(response.headers()['content-type']).toContain('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    expect(response.headers()['content-disposition']).toContain('attachment');
+    expect(response.headers()['content-disposition']).toContain('open-tasks.xlsx');
+  });
+});

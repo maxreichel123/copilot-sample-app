@@ -32,7 +32,10 @@
       <section class="tasks-list">
         <div class="tasks-header">
           <h2>Tasks</h2>
-          <button class="btn btn-secondary" onclick="exportTasksAsCsv()">Export as CSV</button>
+          <div class="export-buttons">
+            <button class="btn btn-secondary" onclick="exportTasksAsCsv()">Export as CSV</button>
+            <button class="btn btn-secondary" onclick="exportTasksAsXlsx()">Export as XLSX</button>
+          </div>
         </div>
         <div id="tasks-container"></div>
       </section>

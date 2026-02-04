@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
+const ExcelJS = require('exceljs');
 
 // GET all tasks
 router.get('/', (req, res) => {
@@ -53,6 +54,59 @@ router.get('/export/csv', (req, res) => {
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename="open-tasks.csv"');
     res.status(200).send(csvContent);
+  });
+});
+
+// GET export open tasks as XLSX
+router.get('/export/xlsx', async (req, res) => {
+  db.all('SELECT id, title, description, created_at FROM tasks WHERE completed = 0 ORDER BY created_at DESC', [], async (err, rows) => {
+    if (err) {
+      console.error('Error exporting tasks:', err.message);
+      return res.status(500).json({ error: 'Failed to export tasks' });
+    }
+
+    try {
+      // Create a new workbook and worksheet
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Open Tasks');
+
+      // Define columns
+      worksheet.columns = [
+        { header: 'Task ID', key: 'id', width: 10 },
+        { header: 'Title', key: 'title', width: 30 },
+        { header: 'Description', key: 'description', width: 50 },
+        { header: 'Created Date', key: 'created_at', width: 20 }
+      ];
+
+      // Style the header row
+      worksheet.getRow(1).font = { bold: true };
+      worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE0E0E0' }
+      };
+
+      // Add data rows
+      rows.forEach(row => {
+        worksheet.addRow({
+          id: row.id,
+          title: row.title,
+          description: row.description,
+          created_at: row.created_at
+        });
+      });
+
+      // Set headers for XLSX download
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename="open-tasks.xlsx"');
+
+      // Write to response
+      await workbook.xlsx.write(res);
+      res.end();
+    } catch (error) {
+      console.error('Error creating XLSX:', error.message);
+      return res.status(500).json({ error: 'Failed to create XLSX file' });
+    }
   });
 });
 
