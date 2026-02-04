@@ -1,6 +1,8 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
+const XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
 test.describe('CSV Export', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -147,7 +149,7 @@ test.describe('XLSX Export', () => {
     expect(xlsxResponse.ok()).toBeTruthy();
     
     // Verify content-type header
-    expect(xlsxResponse.headers()['content-type']).toContain('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    expect(xlsxResponse.headers()['content-type']).toContain(XLSX_MIME_TYPE);
   });
 
   test('should return valid XLSX file', async ({ request }) => {
@@ -160,7 +162,7 @@ test.describe('XLSX Export', () => {
     expect(response.ok()).toBeTruthy();
     
     // Verify content-type and content-disposition headers
-    expect(response.headers()['content-type']).toContain('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    expect(response.headers()['content-type']).toContain(XLSX_MIME_TYPE);
     expect(response.headers()['content-disposition']).toContain('attachment');
     expect(response.headers()['content-disposition']).toContain('open-tasks.xlsx');
   });

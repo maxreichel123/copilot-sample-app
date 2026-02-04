@@ -58,7 +58,7 @@ router.get('/export/csv', (req, res) => {
 });
 
 // GET export open tasks as XLSX
-router.get('/export/xlsx', async (req, res) => {
+router.get('/export/xlsx', (req, res) => {
   db.all('SELECT id, title, description, created_at FROM tasks WHERE completed = 0 ORDER BY created_at DESC', [], async (err, rows) => {
     if (err) {
       console.error('Error exporting tasks:', err.message);
@@ -105,7 +105,10 @@ router.get('/export/xlsx', async (req, res) => {
       res.end();
     } catch (error) {
       console.error('Error creating XLSX:', error.message);
-      return res.status(500).json({ error: 'Failed to create XLSX file' });
+      // Only send error response if headers haven't been sent
+      if (!res.headersSent) {
+        return res.status(500).json({ error: 'Failed to create XLSX file' });
+      }
     }
   });
 });
