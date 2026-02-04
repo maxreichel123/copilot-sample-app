@@ -46,10 +46,11 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const { title, description, completed } = req.body;
+  const normalizedCompleted = completed ? 1 : 0;
   
   db.run(
     'UPDATE tasks SET title = ?, description = ?, completed = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-    [title, description, completed, id],
+    [title, description, normalizedCompleted, id],
     function(err) {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -57,7 +58,7 @@ router.put('/:id', (req, res) => {
       if (this.changes === 0) {
         return res.status(404).json({ error: 'Task not found' });
       }
-      res.json({ id, title, description, completed });
+      res.json({ id, title, description, completed: normalizedCompleted });
     }
   );
 });
