@@ -67,10 +67,10 @@ test.describe('Task Priority Feature', () => {
     expect(task.priority).toBe(3);
   });
 
-  test('should accept priority as string and convert to number', async ({ request }) => {
+  test('should accept priority as string "1" and convert to number', async ({ request }) => {
     const response = await request.post('/api/tasks', {
       data: {
-        title: 'Task with string priority',
+        title: 'Task with string priority 1',
         priority: '1'
       }
     });
@@ -78,6 +78,32 @@ test.describe('Task Priority Feature', () => {
     expect(response.status()).toBe(201);
     const task = await response.json();
     expect(task.priority).toBe(1);
+  });
+
+  test('should accept priority as string "2" and convert to number', async ({ request }) => {
+    const response = await request.post('/api/tasks', {
+      data: {
+        title: 'Task with string priority 2',
+        priority: '2'
+      }
+    });
+
+    expect(response.status()).toBe(201);
+    const task = await response.json();
+    expect(task.priority).toBe(2);
+  });
+
+  test('should accept priority as string "3" and convert to number', async ({ request }) => {
+    const response = await request.post('/api/tasks', {
+      data: {
+        title: 'Task with string priority 3',
+        priority: '3'
+      }
+    });
+
+    expect(response.status()).toBe(201);
+    const task = await response.json();
+    expect(task.priority).toBe(3);
   });
 
   test('should reject invalid priority value 0', async ({ request }) => {
@@ -204,7 +230,7 @@ test.describe('Task Priority Feature', () => {
     expect(error.error).toContain('must be 1, 2, or 3');
   });
 
-  test('should sort tasks by priority in descending order', async ({ request }) => {
+  test('should sort tasks by priority value in descending order (3, 2, 1)', async ({ request }) => {
     // Create tasks with different priorities
     await request.post('/api/tasks', {
       data: { title: 'Low Priority Task', priority: 3 }
@@ -221,11 +247,12 @@ test.describe('Task Priority Feature', () => {
     expect(response.status()).toBe(200);
     const tasks = await response.json();
 
-    // Verify sorting: DESC means 3, 2, 1 (Low, Medium, High)
+    // Verify sorting: Descending by numeric value means Low (3) appears before High (1)
+    // Note: This is the current implementation behavior
     expect(tasks.length).toBe(3);
-    expect(tasks[0].priority).toBe(3); // Low priority first (DESC order)
+    expect(tasks[0].priority).toBe(3); // Low priority first (highest numeric value)
     expect(tasks[1].priority).toBe(2); // Medium priority second
-    expect(tasks[2].priority).toBe(1); // High priority last
+    expect(tasks[2].priority).toBe(1); // High priority last (lowest numeric value)
   });
 
   test('should reject empty string priority as invalid', async ({ request }) => {
